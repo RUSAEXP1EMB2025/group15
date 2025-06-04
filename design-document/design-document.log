@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  4 JUN 2025 15:09
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  4 JUN 2025 15:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -372,7 +372,8 @@ File: l3backend-dvips.def 2025-04-14 L3 backend support: dvips
 \g__pdfannot_backend_int=\count326
 \g__pdfannot_backend_link_int=\count327
 \g__pdfannot_backend_link_sf_int=\count328
-) (./design-document.aux)
+)
+No file design-document.aux.
 \openout1 = `design-document.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
@@ -398,7 +399,6 @@ Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count329
 
-
 LaTeX Warning: No \author given.
 
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <14.4> not available
@@ -413,9 +413,9 @@ LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <14.4> not available
 
 [2]
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 70.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 71.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 70.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 71.
 
 
 [3] (./design-document.aux)
@@ -426,12 +426,12 @@ L3 programming layer <2025-04-29>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14936 strings out of 470235
- 297519 string characters out of 5489042
+ 14933 strings out of 470235
+ 297447 string characters out of 5489042
  660478 words of memory out of 5000000
- 41579 multiletter control sequences out of 15000+600000
+ 41578 multiletter control sequences out of 15000+600000
  637590 words of font info for 82 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  85i,6n,91p,491b,327s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on design-document.dvi (3 pages, 7664 bytes).
+Output written on design-document.dvi (3 pages, 7860 bytes).
