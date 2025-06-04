@@ -1,0 +1,36 @@
+{
+  "latex-workshop.latex.tools": [
+    {
+      "name": "platex",
+      "command": "platex",
+      "args": [
+        "-interaction=nonstopmode",
+        "-synctex=1",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "dvipdfmx",
+      "command": "dvipdfmx",
+      "args": [
+        "%DOCFILE%.dvi"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "platex ➞ dvipdfmx",
+      "tools": [
+        "platex",
+        "dvipdfmx"
+      ]
+    }
+  ],
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux",
+    "*.log",
+    "*.dvi",
+    "*.synctex.gz",
+    "*.out"
+  ]
+}
