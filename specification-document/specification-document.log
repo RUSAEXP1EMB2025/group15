@@ -1,9 +1,9 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  11 JUN 2025 09:37
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  11 JUN 2025 09:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**c:/Users/yuto3/Desktop/Rits/2025spring/SAExperiment/remo/group15/design-document/design-document
-(c:/Users/yuto3/Desktop/Rits/2025spring/SAExperiment/remo/group15/design-document/design-document.tex
+**c:/Users/yuto3/Desktop/Rits/2025spring/SAExperiment/remo/group15/specification-document/specification-document
+(c:/Users/yuto3/Desktop/Rits/2025spring/SAExperiment/remo/group15/specification-document/specification-document.tex
 pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-04-29>
@@ -372,27 +372,27 @@ File: l3backend-dvips.def 2025-04-14 L3 backend support: dvips
 \g__pdfannot_backend_int=\count326
 \g__pdfannot_backend_link_int=\count327
 \g__pdfannot_backend_link_sf_int=\count328
-) (./design-document.aux)
-\openout1 = `design-document.aux'.
+) (./specification-document.aux)
+\openout1 = `specification-document.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
@@ -405,20 +405,17 @@ LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <14.4> not available
 (Font)              Font shape `JT1/gt/m/n' tried instead on input line 18.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <14.4> not available
 (Font)              Font shape `JY1/gt/m/n' tried instead on input line 18.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 19.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 19.
 
 
 [1
 
 ]
 
-[2]
-LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 72.
-LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 72.
-
-
-[3] (./design-document.aux)
+[2] (./specification-document.aux)
  ***********
 pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2024-11-01> patch level 2
@@ -426,12 +423,12 @@ L3 programming layer <2025-04-29>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14936 strings out of 470235
- 297519 string characters out of 5489042
- 660478 words of memory out of 5000000
- 41579 multiletter control sequences out of 15000+600000
- 637590 words of font info for 82 fonts, out of 8000000 for 9000
+ 14932 strings out of 470235
+ 297538 string characters out of 5489042
+ 657493 words of memory out of 5000000
+ 41576 multiletter control sequences out of 15000+600000
+ 637589 words of font info for 82 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 85i,6n,91p,491b,327s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 85i,6n,91p,505b,266s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on design-document.dvi (3 pages, 7736 bytes).
+Output written on specification-document.dvi (2 pages, 3552 bytes).
