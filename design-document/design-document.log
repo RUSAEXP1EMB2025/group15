@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  11 JUN 2025 09:37
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  11 JUN 2025 11:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -416,9 +416,17 @@ LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
 (Font)              Font shape `JT1/gt/m/n' tried instead on input line 72.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
 (Font)              Font shape `JY1/gt/m/n' tried instead on input line 72.
+File: root.eps Graphic file (type eps)
+ <root.eps>
+Overfull \hbox (48.39676pt too wide) in paragraph at lines 115--116
+ [] 
+ []
 
 
-[3] (./design-document.aux)
+
+[3]
+
+[4] (./design-document.aux)
  ***********
 pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2024-11-01> patch level 2
@@ -426,12 +434,12 @@ L3 programming layer <2025-04-29>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14936 strings out of 470235
- 297519 string characters out of 5489042
+ 14952 strings out of 470235
+ 297791 string characters out of 5489042
  660478 words of memory out of 5000000
- 41579 multiletter control sequences out of 15000+600000
+ 41594 multiletter control sequences out of 15000+600000
  637590 words of font info for 82 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 85i,6n,91p,491b,327s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 85i,6n,91p,491b,414s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on design-document.dvi (3 pages, 7736 bytes).
+Output written on design-document.dvi (4 pages, 8276 bytes).
