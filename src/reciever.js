@@ -9,7 +9,7 @@ function doPost(e) {
     var date = new Date();
     var replyToken = json.events[0].replyToken;
 
-    var CHANNEL_ACCESS_TOKEN = "hcre+X+7tc46fUoPuGgBopw/QccQtgRkhODt0y1ZX0W2e4ddE+3/Ua7E3sJEIcsfN7SMprAofrKzsm7HNG4URLgY7T66N+kbsZExQtvviZqJn4Cxadam/TkJH3ddgLLKiGpmTRraPNyyv/AxfGWo9gdB04t89/1O/w1cDnyilFU=";
+    
     var replyUrl = "https://api.line.me/v2/bot/message/reply";
     var headers = {
       "Content-Type": "application/json",
