@@ -17,11 +17,11 @@ Please write your channel access token which you generated instead of YOUR_CHANN
 Go to trigger page and set trigeer as below.
 
 ```
-Choose which function to run: sendAlarmMail
-Choose which deployment should run: Head
-Select event source: Time-Driven
-Select type of time based trigger: Minutes Timer
-Select minute interval: Every minutes
+Choose which function to run       : sendAlarmMail
+Choose which deployment should run : Head
+Select event source                : Time-Driven
+Select type of time based trigger  : Minutes Timer
+Select minute interval             : Every minutes
 ```
 
 ## About git
