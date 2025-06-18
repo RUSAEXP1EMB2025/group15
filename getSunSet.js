@@ -1,6 +1,8 @@
 function getDailySunset() {
-  const LAT = 34.8163;
-  const LNG = 135.5685;
+ 
+  //立命館大学OIC
+  const LAT = 34.7776; // 緯度
+  const LNG = 135.6154; // 経度
   const url = `https://api.sunrise-sunset.org/json?lat=${LAT}&lng=${LNG}&formatted=0`;
 
   const response = UrlFetchApp.fetch(url);
