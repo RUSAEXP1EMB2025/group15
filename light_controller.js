@@ -1,39 +1,23 @@
-const ACCESS_TOKEN = ''; // Nature Remoのアクセストークン
+//時刻制御
+function lightController(){
+//現在の時刻取得  
+  const now = new Date();
+  //YYMMDDhhmmに変換
+  const nowTime = formatDate(now);
+  Logger.log(nowTime);
 
-function turnOnLight() {
-  const url = 'https://api.nature.global/1/appliances';
-  const headers = {
-    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-  };
-  const options = {
-    'method': 'get',
-    'headers': headers,
-  };
+//日の出判定
+ if(nowTime==getDailySunrise()){
+  turnOnLight();
+ }else{
+  Logger.log('NOT SunRise!');
+ }
 
-  const response = UrlFetchApp.fetch(url, options);
-  const appliances = JSON.parse(response.getContentText());
+//日の入り判定
+ if(nowTime==getDailySunset()){
+  turnOnLight();
+ }else{
+  Logger.log('NOT Sunset!');
+ }
 
-  // 照明のnicknameを指定
-  const lightNickname = '照明';
-
-  for (let i = 0; i < appliances.length; i++) {
-    if (appliances[i].nickname === lightNickname && appliances[i].type === 'LIGHT') {
-      const signals = appliances[i].signals;
-      for (let j = 0; j < signals.length; j++) {
-        if (signals[j].name === 'オン') { // "オン"という名前の信号を探す
-          const signalId = signals[j].id;
-          const signalUrl = `https://api.nature.global/1/signals/${signalId}/send`;
-          const signalOptions = {
-            'method': 'post',
-            'headers': headers,
-          };
-          UrlFetchApp.fetch(signalUrl, signalOptions);
-          return;
-        }
-      }
-    }
-  }
 }
-
-
-
