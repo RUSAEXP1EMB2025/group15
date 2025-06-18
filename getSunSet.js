@@ -12,7 +12,7 @@ function getDailySunset() {
   const sunsetUTC = new Date(data.results.sunset);
   const sunsetJST = new Date(sunsetUTC.getTime());
 
-
+  //YYMMDDhhmmに変換
   const sunSetTime = formatDate(sunsetJST);
   Logger.log(sunSetTime);
   return sunSetTime;
