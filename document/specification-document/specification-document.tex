@@ -1,0 +1,40 @@
+\documentclass{jarticle}
+\usepackage[dvipdfmx]{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{capt-of}
+\usepackage{amsmath}
+\usepackage{listings}
+
+
+\title{要求仕様書}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{全体概要}
+\subsection*{システムの概要}
+LINE から設定できるスマートスピーカー, 照明による目覚まし機能, 及び部屋の明るさの自動調整.
+\subsection*{製品の機能}
+目覚まし機能はスマートスピーカーと照明により行われる.LINE から鳴らしたい音, スヌーズ機能, 曜日ご
+との設定, 日ごとの設定, アラームの解除ができる. 照明はその日の天気が分かるよう晴れなら冷色, 雨なら暖
+色, 曇りならその中間の色の明かりがつく. 部屋の明るさの自動調整は, ５分ごとに Remo3 のセンサから光
+度, 人がいるかの情報を取得し, 人がいた場合には光度を一定に保つ. 夜に電気が消えた場合は調整が行われな
+い.LINE から明るさ, 調整の有無を設定が出来る.
+\subsection*{想定する利用者の特性}
+明かりの要素がある目覚まし機能であり, その調整をスマホで遠隔で行えるため, 目覚まし機能を求める人を
+想定している. また部屋の明るさの自動調整は, 日中は日の光で生活し, 暗くなってきた時の調整が面倒な人に
+とって便利だと考える.
+
+\section*{詳細}
+\subsection*{機能要求}
+\begin{itemize}
+    \item ユーザは LINE から目覚ましの機能 (鳴らしたい音, スヌーズ機能, 曜日ごとの設定, 日ごとの設定, アラームの解除) が設定できること.\\
+    \item 目覚ましの明かりの色によってその日の天気が分かること.\\
+    \item 部屋に人がいる時に明るさの自動調整が行われること.\\
+    \item ユーザはLINE から照明の設定(明るさ, 調整の有無) ができること.\\
+\end{itemize}
+\end{document}
