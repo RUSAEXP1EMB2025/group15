@@ -46,7 +46,7 @@ function sendRemoSignal(signalId) {
 
 // メイン関数：天気をチェックして照明を変更
 function controlLightBasedOnWeather() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('weather');
   const now = new Date();
 
   const weather = getOsakaWeather();
