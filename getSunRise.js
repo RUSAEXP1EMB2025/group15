@@ -8,10 +8,11 @@ function getDailySunrise() {
   const response = UrlFetchApp.fetch(url);
   const data = JSON.parse(response.getContentText());
 
-
+  //日の出時刻取得
   const sunriseUTC = new Date(data.results.sunrise);
   const sunriseJST = new Date(sunriseUTC.getTime());
 
+  //YYMMDDhhmmに変換
   const sunRiseTime = formatDate(sunriseJST);
   Logger.log(sunRiseTime);
   return sunRiseTime;
