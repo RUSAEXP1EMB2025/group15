@@ -3,6 +3,13 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var alarmSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("シート1");
 
+  // 毎週アラーム用のシート
+  var weeklySheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("weekly");
+  if (!weeklySheet) {
+    weeklySheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("weekly");
+    weeklySheet.appendRow(["userId", "weekDayNum", "timeStr"]);
+  }
+
   if (json.events && json.events[0] && json.events[0].type === "message") {
     var userId = json.events[0].source.userId;
     var message = json.events[0].message.text;
@@ -12,24 +19,121 @@ function doPost(e) {
     var replyUrl = "https://api.line.me/v2/bot/message/reply";
     var headers = {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN // ご自身のトークンを設定
+      "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN
     };
 
-    // 状態管理用の「state」シート
     var stateSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("state");
     if (!stateSheet) {
       stateSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("state");
       stateSheet.appendRow(["userId", "status", "alarmIndexes"]);
     }
     var states = stateSheet.getDataRange().getValues();
-    var userRow = states.findIndex(row => row[0] === userId);
+    var userRow = states.findIndex(row => String(row[0]) === String(userId));
     var userStatus = userRow >= 0 ? states[userRow][1] : "";
-
     var replyText = "";
     var alarmTimePattern = /^\d{10}$/;
 
-    // アラーム一覧（表示のみ、削除誘導なし）
-    if (message === "アラーム一覧") {
+    // ---------------------- 毎週アラーム ----------------------
+    if (message === "毎週アラーム設定") {
+      replyText = "毎週何曜日の何時にアラームを設定しますか？\n例: 火曜 07:00";
+      if (userRow >= 0) {
+        stateSheet.getRange(userRow + 1, 2).setValue("wait_weekly_alarm");
+      } else {
+        stateSheet.appendRow([userId, "wait_weekly_alarm", ""]);
+      }
+    }
+    else if (userStatus === "wait_weekly_alarm") {
+      var weekDayMatch = message.match(/(日|月|火|水|木|金|土)曜?\s*([0-2]?\d)(?::|時)?([0-5]?\d)?/);
+      if (weekDayMatch) {
+        var weekDayStr = weekDayMatch[1];
+        var hour = weekDayMatch[2].padStart(2, '0');
+        var min = weekDayMatch[3] ? weekDayMatch[3].padStart(2, '0') : '00';
+        var weekDayNum = ["日", "月", "火", "水", "木", "金", "土"].indexOf(weekDayStr);
+        if (weekDayNum >= 0) {
+          var timeStr = hour + min;
+          var weeklyData = weeklySheet.getDataRange().getValues();
+          // 既存の同じユーザー・同じ曜日を削除
+          for (var i = weeklyData.length - 1; i > 0; i--) {
+            if (
+              String(weeklyData[i][0]) === String(userId) &&
+              Number(weeklyData[i][1]) === weekDayNum
+            ) {
+              weeklySheet.deleteRow(i + 1);
+            }
+          }
+          weeklySheet.appendRow([userId, weekDayNum, timeStr]);
+          replyText = "毎週" + "日月火水木金土".charAt(weekDayNum) + "曜 " + hour + ":" + min + " にアラームを設定しました。";
+          stateSheet.getRange(userRow + 1, 2).setValue("");
+        } else {
+          replyText = "曜日が認識できません。もう一度「火曜 07:00」などの形式で入力してください。";
+        }
+      } else {
+        replyText = "形式が正しくありません。「火曜 07:00」などの形式で入力してください。";
+      }
+    }
+    // ★ 毎週アラーム一覧（いちらん）
+    else if (message === "いちらん") {
+      var weeklyData = weeklySheet.getDataRange().getValues();
+      var alarms = [];
+      for (var i = 1; i < weeklyData.length; i++) {
+        // userIdの前後空白除去・String変換で一致判定
+        var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
+        if (1/*uid === userId*/) {
+          var weekDayNum = Number(weeklyData[i][1]);
+          var t = weeklyData[i][2];
+          alarms.push("・" + "日月火水木金土".charAt(weekDayNum) + "曜 " + t.slice(0,2) + ":" + t.slice(2,4));
+        }
+      }
+      if(alarms.length === 0){
+        replyText = "毎週アラームは登録されていません。";
+      }else{
+        "登録されている毎週アラーム：\n" + alarms.join("\n");
+      }
+    }
+    // ★ 毎週アラーム解除（かいじょ）
+    else if (message === "かいじょ") {
+      var weeklyData = weeklySheet.getDataRange().getValues();
+      var alarms = [];
+      var alarmIndexes = [];
+      for (var i = 1; i < weeklyData.length; i++) {
+        var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
+        if (uid === userId) {
+          alarms.push((alarms.length + 1) + ": " + "日月火水木金土".charAt(Number(weeklyData[i][1])) + "曜 " + weeklyData[i][2].slice(0,2) + ":" + weeklyData[i][2].slice(2,4));
+          alarmIndexes.push(i + 1);
+        }
+      }
+      if (alarms.length === 0) {
+        replyText = "毎週アラームは登録されていません。";
+      } else {
+        replyText = "登録されている毎週アラーム：\n" + alarms.join("\n") + "\n削除したいアラームの番号を送信してください。";
+        if (userRow >= 0) {
+          stateSheet.getRange(userRow + 1, 2).setValue("wait_delete_weekly_alarm");
+          stateSheet.getRange(userRow + 1, 3).setValue(alarmIndexes.join(","));
+        } else {
+          stateSheet.appendRow([userId, "wait_delete_weekly_alarm", alarmIndexes.join(",")]);
+        }
+      }
+    }
+    else if (userStatus === "wait_delete_weekly_alarm" && /^\d+$/.test(message)) {
+      var alarmIndexesStr = states[userRow][2];
+      if (alarmIndexesStr) {
+        var alarmIndexes = alarmIndexesStr.split(",").map(Number);
+        var idx = parseInt(message, 10) - 1;
+        var delRow = alarmIndexes[idx];
+        if (idx >= 0 && idx < alarmIndexes.length && delRow > 1 && delRow <= weeklySheet.getLastRow()) {
+          weeklySheet.deleteRow(delRow);
+          replyText = "毎週アラームを削除しました。";
+        } else {
+          replyText = "正しい番号を送信してください。";
+        }
+        stateSheet.getRange(userRow + 1, 2, 1, 2).setValues([["", ""]]);
+      } else {
+        replyText = "もう一度「かいじょ」と送信してください。";
+      }
+    }
+
+    // ------------------- 単発アラーム -------------------
+    else if (message === "アラーム一覧") {
       var alarmData = alarmSheet.getDataRange().getValues();
       var userAlarms = [];
       var now = new Date();
@@ -58,7 +162,6 @@ function doPost(e) {
         }
       }
     }
-    // アラーム解除（削除モード）
     else if (message === "アラーム解除") {
       var alarmData = alarmSheet.getDataRange().getValues();
       var userAlarms = [];
@@ -72,7 +175,7 @@ function doPost(e) {
             userAlarms.push({
               dateObj: alarmDate,
               text: formatAlarmTime(alarmTime),
-              row: i + 1 // シート上の行番号
+              row: i + 1
             });
           }
         }
@@ -98,7 +201,6 @@ function doPost(e) {
         }
       }
     }
-    // アラーム削除番号受信
     else if (userStatus === "wait_delete_alarm" && /^\d+$/.test(message)) {
       sheet.appendRow([date, userId, "アラーム削除リクエスト:" + message]);
       var alarmIndexesStr = states[userRow][2];
@@ -106,7 +208,6 @@ function doPost(e) {
         var alarmIndexes = alarmIndexesStr.split(",").map(Number);
         var idx = parseInt(message, 10) - 1;
         var delRow = alarmIndexes[idx];
-        // データが1件でも必ず2行目（delRow=2）で消える
         if (
           idx >= 0 &&
           idx < alarmIndexes.length &&
@@ -124,7 +225,8 @@ function doPost(e) {
         replyText = "もう一度「アラーム解除」と送信してください。";
       }
     }
-    // 目覚まし設定機能（既存）
+
+    // ------------------- 目覚まし設定（単発） -------------------
     else if (message === "目覚まし設定") {
       replyText = "起床時間をYYMMDDhhmm形式で入力してください";
       if (userRow >= 0) {
@@ -134,18 +236,17 @@ function doPost(e) {
       }
       sheet.appendRow([date, userId, message]);
     }
-    // 入力待ちで時刻受信
     else if (userStatus === "wait_alarm_time" && alarmTimePattern.test(message)) {
       replyText = "登録されました";
       stateSheet.getRange(userRow + 1, 2).setValue("");
       sheet.appendRow([date, userId, message]);
     }
-    // 入力待ちで形式ミス
     else if (userStatus === "wait_alarm_time") {
       replyText = "起床時間をYYMMDDhhmm形式で入力してください";
     }
 
-    if (replyText) {
+    // 必ず返信する
+    if (replyText !== undefined && replyText !== null && replyText !== "") {
       var postData = {
         "replyToken": replyToken,
         "messages": [{ "type": "text", "text": replyText }]
@@ -172,10 +273,9 @@ function formatAlarmTime(str) {
 }
 
 function parseAlarmTime(str) {
-  // "YYMMDDhhmm" → Date オブジェクト
   if (!/^\d{10}$/.test(str)) return null;
   var year = 2000 + parseInt(str.slice(0, 2), 10);
-  var month = parseInt(str.slice(2, 4), 10) - 1; // 0始まり
+  var month = parseInt(str.slice(2, 4), 10) - 1;
   var day = parseInt(str.slice(4, 6), 10);
   var hour = parseInt(str.slice(6, 8), 10);
   var min = parseInt(str.slice(8, 10), 10);
