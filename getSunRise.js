@@ -6,12 +6,13 @@ function getDailySunrise() {
   const response = UrlFetchApp.fetch(url);
   const data = JSON.parse(response.getContentText());
 
-  const sunriseUTC = new Date(data.results.sunrise);
-  const sunriseJST = new Date(sunriseUTC.getTime() + 9 * 60 * 60 * 1000);
 
-  const formatted = formatDate(sunriseJST);
-  Logger.log('日の出（10桁）: ' + formatted);
-  return formatted;
+  const sunriseUTC = new Date(data.results.sunrise);
+  const sunriseJST = new Date(sunriseUTC.getTime());
+
+  const sunRiseTime = formatDate(sunriseJST);
+  Logger.log(sunRiseTime);
+  return sunRiseTime;
 }
 
 function formatDate(date) {
