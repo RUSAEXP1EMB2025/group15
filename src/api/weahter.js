@@ -1,5 +1,5 @@
 // ★ Nature Remo のアクセストークンを設定
-const REMO_TOKEN = 'アクセストークンを入力';
+const REMO_TOKEN = 'ory_at_BLRBmrPYbJYQ12nS8HNDXXOXh8jT3Ib269NyK0lmQeY.D9NNkRcpL0jhjfURYx2tmGiL-CtS0I0O7_sGm7fLIBQ';
 
 // ★ 各天気に対応する Signal ID（アプリで確認して設定）
 const SIGNAL_IDS = {
@@ -46,7 +46,7 @@ function sendRemoSignal(signalId) {
 
 // メイン関数：天気をチェックして照明を変更
 function controlLightBasedOnWeather() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('weather');
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const now = new Date();
 
   const weather = getOsakaWeather();
@@ -65,7 +65,7 @@ function controlLightBasedOnWeather() {
 }
 
 function listRemoSignals() {
-  const REMO_TOKEN = 'アクセストークンを入力';
+  const REMO_TOKEN = 'ory_at_BLRBmrPYbJYQ12nS8HNDXXOXh8jT3Ib269NyK0lmQeY.D9NNkRcpL0jhjfURYx2tmGiL-CtS0I0O7_sGm7fLIBQ';
   const url = 'https://api.nature.global/1/signals';
   const options = {
     method: 'get',
