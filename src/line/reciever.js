@@ -46,8 +46,8 @@ function doPost(e) {
       var weekDayMatch = message.match(/(日|月|火|水|木|金|土)曜?\s*([0-2]?\d)(?::|時)?([0-5]?\d)?/);
       if (weekDayMatch) {
         var weekDayStr = weekDayMatch[1];
-        var hour = weekDayMatch[2].padStart(2, '0');
-        var min = weekDayMatch[3] ? weekDayMatch[3].padStart(2, '0') : '00';
+        var hour = String(weekDayMatch[2]).padStart(2, '0');
+        var min = weekDayMatch[3] ? String(weekDayMatch[3]).padStart(2, '0') : '00';
         var weekDayNum = ["日", "月", "火", "水", "木", "金", "土"].indexOf(weekDayStr);
         if (weekDayNum >= 0) {
           var timeStr = hour + min;
@@ -61,7 +61,8 @@ function doPost(e) {
               weeklySheet.deleteRow(i + 1);
             }
           }
-          weeklySheet.appendRow([userId, weekDayNum, timeStr]);
+          // 文字列として保存するため先頭にシングルクォート
+          weeklySheet.appendRow([userId, weekDayNum, "'" + timeStr]);
           replyText = "毎週" + "日月火水木金土".charAt(weekDayNum) + "曜 " + hour + ":" + min + " にアラームを設定しました。";
           stateSheet.getRange(userRow + 1, 2).setValue("");
         } else {
@@ -75,19 +76,28 @@ function doPost(e) {
     else if (message === "いちらん") {
       var weeklyData = weeklySheet.getDataRange().getValues();
       var alarms = [];
-      for (var i = 1; i < weeklyData.length; i++) {
-        // userIdの前後空白除去・String変換で一致判定
+      for (var i = 0; i < weeklyData.length; i++) {
         var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
-        if (1/*uid === userId*/) {
+        if (uid === userId) {
           var weekDayNum = Number(weeklyData[i][1]);
           var t = weeklyData[i][2];
-          alarms.push("・" + "日月火水木金土".charAt(weekDayNum) + "曜 " + t.slice(0,2) + ":" + t.slice(2,4));
+          if (typeof t === "string" && t.charAt(0) === "'") t = t.slice(1);
+          alarms.push({
+            weekDayNum: weekDayNum,
+            timeStr: t,
+            text: "・" + "日月火水木金土".charAt(weekDayNum) + "曜 " + t.slice(0,2) + ":" + t.slice(2,4)
+          });
         }
       }
+      // 曜日→時間で昇順ソート
+      alarms.sort(function(a, b) {
+        if (a.weekDayNum !== b.weekDayNum) return a.weekDayNum - b.weekDayNum;
+        return a.timeStr.localeCompare(b.timeStr);
+      });
       if(alarms.length === 0){
         replyText = "毎週アラームは登録されていません。";
       }else{
-        "登録されている毎週アラーム：\n" + alarms.join("\n");
+        replyText = "登録されている毎週アラーム：\n" + alarms.map(a => a.text).join("\n");
       }
     }
     // ★ 毎週アラーム解除（かいじょ）
@@ -95,17 +105,35 @@ function doPost(e) {
       var weeklyData = weeklySheet.getDataRange().getValues();
       var alarms = [];
       var alarmIndexes = [];
-      for (var i = 1; i < weeklyData.length; i++) {
+      for (var i = 0; i < weeklyData.length; i++) {
         var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
         if (uid === userId) {
-          alarms.push((alarms.length + 1) + ": " + "日月火水木金土".charAt(Number(weeklyData[i][1])) + "曜 " + weeklyData[i][2].slice(0,2) + ":" + weeklyData[i][2].slice(2,4));
+          var weekDayNum = Number(weeklyData[i][1]);
+          var t = weeklyData[i][2];
+          if (typeof t === "string" && t.charAt(0) === "'") t = t.slice(1);
+          alarms.push({
+            weekDayNum: weekDayNum,
+            timeStr: t,
+            row: i + 1,
+            text: null
+          });
           alarmIndexes.push(i + 1);
         }
+      }
+      // 曜日→時間で昇順ソート
+      alarms.sort(function(a, b) {
+        if (a.weekDayNum !== b.weekDayNum) return a.weekDayNum - b.weekDayNum;
+        return a.timeStr.localeCompare(b.timeStr);
+      });
+      // 番号振り直し
+      for (var j = 0; j < alarms.length; j++) {
+        alarms[j].text = (j + 1) + ": " + "日月火水木金土".charAt(alarms[j].weekDayNum) + "曜 " + alarms[j].timeStr.slice(0,2) + ":" + alarms[j].timeStr.slice(2,4);
+        alarmIndexes[j] = alarms[j].row;
       }
       if (alarms.length === 0) {
         replyText = "毎週アラームは登録されていません。";
       } else {
-        replyText = "登録されている毎週アラーム：\n" + alarms.join("\n") + "\n削除したいアラームの番号を送信してください。";
+        replyText = "登録されている毎週アラーム：\n" + alarms.map(a => a.text).join("\n") + "\n削除したいアラームの番号を送信してください。";
         if (userRow >= 0) {
           stateSheet.getRange(userRow + 1, 2).setValue("wait_delete_weekly_alarm");
           stateSheet.getRange(userRow + 1, 3).setValue(alarmIndexes.join(","));
