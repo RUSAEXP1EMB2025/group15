@@ -19,6 +19,15 @@ function sendAlarmMail() {
       count++;
     }
   }
+  if(count == 0 && now == getDailySunrise()){
+    if(decideLightColor(getOsakaWeather) == "白色"){
+      change_color_cold();
+    }else if(decideLightColor(getOsakaWeather) == "黄色"){
+      change_color_warm();
+    }
+
+  }
+
   SpreadsheetApp.getUi().alert("完了！" + count + "件の行に通知済みを記録しました。");
 }
 
