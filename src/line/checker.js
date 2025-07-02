@@ -25,7 +25,7 @@ function sendAlarmMail() {
       count++;
     }
   }
-  if(count == 0 && now == getDailySunrise()){
+  if(count == 0 &&( now == getDailySunrise() || now == getDailySunset())){
     on();
     if(decideLightColor(getOsakaWeather()) == "白色"){
       change_cool();
@@ -73,6 +73,16 @@ function sendWeeklyAlarmMail() {
       Logger.log("通知済み: row " + (i + 1) + " at " + nowTimeStr);
       count++;
     }
+    
+  }
+  if(count == 0 &&( now == getDailySunrise() || now == getDailySunset())){
+    on();
+    if(decideLightColor(getOsakaWeather()) == "白色"){
+      change_cool();
+    }else if(decideLightColor(getOsakaWeather()) == "黄色"){
+      change_warm();
+    }
+
   }
   //SpreadsheetApp.getUi().alert("完了！" + count + "件の行に通知済みを記録・メール送信しました。");
 }
