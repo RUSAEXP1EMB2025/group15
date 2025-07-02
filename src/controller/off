@@ -1,8 +1,0 @@
-function off() {
-  var url = "https://api.nature.global/1/signals/" + "8a02fa60-e218-4c4d-b31d-a5ea34769021" + "/send"
-    var options = {
-      "method" : "post",
-      "headers" : {"Authorization" : "Bearer ory_at_VXpeuuSNUAC0381bEDo2RZcjKekoh9LI6NtB0tMRDRg.Mp78KMyOtmX8c3nn-bORMu1EQHab9x5GFUIqnJtT9lk"}
-    };
-    var reply = UrlFetchApp.fetch(url, options);
-}

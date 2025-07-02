@@ -19,11 +19,12 @@ function sendAlarmMail() {
       count++;
     }
   }
-  if(count == 0 && now == getDailySunrise()){
+  if(count == 0 /*&& now == getDailySunrise()*/){
+    on();
     if(decideLightColor(getOsakaWeather) == "白色"){
-      change_color_cold();
+      change_cool();
     }else if(decideLightColor(getOsakaWeather) == "黄色"){
-      change_color_warm();
+      change_warm();
     }
 
   }
