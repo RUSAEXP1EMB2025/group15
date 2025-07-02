@@ -14,16 +14,22 @@ function sendAlarmMail() {
     var alarmTime = String(row[2]); // 数値でも文字列化して判定
     var notified = row[3];
     if (alarmPattern.test(alarmTime) && alarmTime == now && !notified) {
+      on();
+      if(decideLightColor(getOsakaWeather()) == "白色"){
+        change_cool();
+      }else if(decideLightColor(getOsakaWeather()) == "黄色"){
+        change_warm();
+      }
       sheet.getRange(i + 1, 4).setValue("mailed at " + now);
       Logger.log("通知済み: row " + (i + 1) + " at " + now);
       count++;
     }
   }
-  if(count == 0 /*&& now == getDailySunrise()*/){
+  if(count == 0 && now == getDailySunrise()){
     on();
-    if(decideLightColor(getOsakaWeather) == "白色"){
+    if(decideLightColor(getOsakaWeather()) == "白色"){
       change_cool();
-    }else if(decideLightColor(getOsakaWeather) == "黄色"){
+    }else if(decideLightColor(getOsakaWeather()) == "黄色"){
       change_warm();
     }
 
@@ -55,6 +61,12 @@ function sendWeeklyAlarmMail() {
 
     // 曜日・時刻一致かつ未通知
     if (weekDayNum === nowWeekDay && timeStr === nowTimeStr && !notified) {
+      on();
+      if(decideLightColor(getOsakaWeather()) == "白色"){
+        change_cool();
+      }else if(decideLightColor(getOsakaWeather()) == "黄色"){
+        change_warm();
+      }
       var mailAddress = YOUR_EMAIL_ADRESS;
       MailApp.sendEmail(mailAddress, "おはようございます", "おはようございます");
       sheet.getRange(i + 1, 4).setValue("mailed at " + nowTimeStr);

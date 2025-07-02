@@ -66,3 +66,26 @@ function listRemoSignals() {
     });
   });
 }
+
+
+// 気象庁APIから大阪府の天気を取得
+function getOsakaWeather() {
+  const url = "https://www.jma.go.jp/bosai/forecast/data/forecast/270000.json";
+  const response = UrlFetchApp.fetch(url);
+  const data = JSON.parse(response.getContentText());
+  const weatherToday = data[0]["timeSeries"][0]["areas"][0]["weathers"][0];
+  return weatherToday;
+}
+
+// 天気に応じて照明色を決定
+function decideLightColor(weather) {
+  if (weather.includes("晴")) {
+    return "白色";
+  } else if (weather.includes("雨")) {
+    return "黄色";
+  } else if (weather.includes("曇")) {
+    return "白と黄色の中間色";
+  } else {
+    return "白色"; // デフォルト
+  }
+}
