@@ -286,6 +286,12 @@ function doPost(e) {
       };
       UrlFetchApp.fetch(replyUrl, options);
     }
+    else if (message == "オン"){
+      on();
+    }
+    else if(message == "オフ"){
+      off();
+    }
   }
   return ContentService.createTextOutput("OK");
 }
