@@ -7,8 +7,8 @@ function sendLineMessage() {
     return;
   }
 
-  const userId = alarmID();
-  const accessToken = alarmKey();
+  const userId = USER_ID;
+  const accessToken = CHANNEL_ACCESS_TOKEN;
 
   // メッセージのバリエーション
   const messagesArray = [
