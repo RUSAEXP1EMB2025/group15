@@ -58,53 +58,77 @@
 \section*{必要なモジュール（.gsファイル）}
 
 \begin{enumerate}
-  \item \textbf{line\_handler.gs}
+  \item \textbf{reciever.gs}
   \begin{itemize}
     \item LINE Webhook の受信
     \item ユーザーからのコマンド（MMDDhhmm形式など）の解析
     \item スケジュールデータの登録・管理
   \end{itemize}
 
-  \item \textbf{schedule\_manager.gs}
+  \item \textbf{checker.gs}
   \begin{itemize}
     \item 目覚ましスケジュールの登録と実行
     \item 日の出・日没イベントの管理
     \item 曜日指定やスヌーズ対応など
+    \item 照明のON・OFFの対応
   \end{itemize}
 
-  \item \textbf{sensor\_reader.gs}
+  \item \textbf{deleter.gs}
   \begin{itemize}
-    \item Nature Remo 3 からの照度センサーデータ取得
-    \item 室内明るさに応じた照明レベルの判定
+    \item 週アラーム機能のリセット
   \end{itemize}
 
-  \item \textbf{weather\_fetcher.gs}
+  \item \textbf{weather.gs}
   \begin{itemize}
     \item 気象庁APIやOpenWeatherMapからの天気情報取得
     \item 天気データの解析（晴れ・曇り・雨の判定）
   \end{itemize}
 
-  \item \textbf{alarm\_controller.gs}
+  \item \textbf{getSunRise.gs}
   \begin{itemize}
-    \item アラーム時の照明ONや赤外線信号の送信
+    \item APIで日の出時刻の取得
+  \end{itemize}
+
+  \item \textbf{getSunSet.gs}
+  \begin{itemize}
+    \item APIで日の入時刻の取得
+  \end{itemize}
+
+  \item \textbf{alarm\_controller.gs, alarm.gs}
+  \begin{itemize}
+    \item アラーム時の赤外線信号の送信
     \item スヌーズ機能の実装
   \end{itemize}
 
-  \item \textbf{light\_controller.gs}
+  \item \textbf{controllerフォルダ以下のgsファイル}\\
+  各照明によって指示が異なるため、複数用意している。
   \begin{itemize}
     \item 天気や照度、日の出・日没時間に応じた照明制御
     \item 照明の色や明るさの変更処理
   \end{itemize}
 \end{enumerate}
 
-\section*{モジュール間の関係}
+\section*{クラス図}
+以下にクラス図を示す
 
 \begin{figure}[H]  % [H] はその場所に固定
   \begin{center}
-    \includegraphics[scale = 0.4]{root.eps}
-    \caption{モジュール間の関係}
-    \label{fig:root}
+    \includegraphics[scale = 0.11]{./fig/class.eps}
+    \caption{クラス図}
+    \label{fig:class}
   \end{center}
 \end{figure}
+
+\section*{シーケンス図}
+以下にシーケンス図を示す
+
+\begin{figure}[H]  % [H] はその場所に固定
+  \begin{center}
+    \includegraphics[scale = 0.11]{./fig/seq.eps}
+    \caption{クラス図}
+    \label{fig:seq}
+  \end{center}
+\end{figure}
+
 
 \end{document}

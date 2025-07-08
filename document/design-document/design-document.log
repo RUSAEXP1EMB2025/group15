@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  8 JUL 2025 11:01
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.sjis) (TeX Live 2025) (preloaded format=platex 2025.5.18)  8 JUL 2025 23:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -417,32 +417,36 @@ LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
 
 
 [2]
-File: root.eps Graphic file (type eps)
- <root.eps>
-Overfull \hbox (48.39676pt too wide) in paragraph at lines 104--105
+File: ./fig/class.eps Graphic file (type eps)
+ <./fig/class.eps>
+Overfull \hbox (96.98634pt too wide) in paragraph at lines 116--117
+ [] 
+ []
+
+File: ./fig/seq.eps Graphic file (type eps)
+<./fig/seq.eps>
+Overfull \hbox (96.98634pt too wide) in paragraph at lines 127--128
  [] 
  []
 
 
 
-[3] (./design-document.aux)
+[3]
+
+[4] (./design-document.aux)
  ***********
 pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-04-29>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 14952 strings out of 470235
- 297818 string characters out of 5489042
+ 14961 strings out of 470235
+ 297984 string characters out of 5489042
  660478 words of memory out of 5000000
- 41594 multiletter control sequences out of 15000+600000
+ 41600 multiletter control sequences out of 15000+600000
  637590 words of font info for 82 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  85i,6n,91p,500b,414s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on design-document.dvi (3 pages, 7192 bytes).
+Output written on design-document.dvi (4 pages, 8124 bytes).
