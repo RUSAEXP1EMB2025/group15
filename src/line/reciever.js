@@ -292,6 +292,12 @@ function doPost(e) {
     else if(message == "オフ"){
       off();
     }
+    else{
+      const props = PropertiesService.getScriptProperties();
+      props.setProperty('stopSending', 'true'); // フラグを立てる
+      Logger.log('ユーザーからメッセージを受信。送信停止フラグを設定しました。');
+      return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+    }
   }
   return ContentService.createTextOutput("OK");
 }

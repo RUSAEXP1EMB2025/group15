@@ -23,6 +23,7 @@ function sendAlarmMail() {
       sheet.getRange(i + 1, 4).setValue("mailed at " + now);
       Logger.log("通知済み: row " + (i + 1) + " at " + now);
       count++;
+      alarmController();
     }
   }
   if(count == 0 &&( now == getDailySunrise() || now == getDailySunset())){
@@ -32,7 +33,7 @@ function sendAlarmMail() {
     }else if(decideLightColor(getOsakaWeather()) == "黄色"){
       change_warm();
     }
-
+    alarmController();
   }
 
   SpreadsheetApp.getUi().alert("完了！" + count + "件の行に通知済みを記録しました。");
@@ -67,6 +68,7 @@ function sendWeeklyAlarmMail() {
       }else if(decideLightColor(getOsakaWeather()) == "黄色"){
         change_warm();
       }
+      alarmController();
       var mailAddress = YOUR_EMAIL_ADRESS;
       MailApp.sendEmail(mailAddress, "おはようございます", "おはようございます");
       sheet.getRange(i + 1, 4).setValue("mailed at " + nowTimeStr);
@@ -82,6 +84,7 @@ function sendWeeklyAlarmMail() {
     }else if(decideLightColor(getOsakaWeather()) == "黄色"){
       change_warm();
     }
+    alarmController();
 
   }
   //SpreadsheetApp.getUi().alert("完了！" + count + "件の行に通知済みを記録・メール送信しました。");
