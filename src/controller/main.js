@@ -86,6 +86,10 @@ function listRemoSignals() {
   return getMainApp().listRemoSignals();
 }
 
+function listAvailableSignals() {
+  return getMainApp().natureRemoController.listAvailableSignals();
+}
+
 function logResult(weather, signalId, statusCode) {
   return getMainApp().logResult(weather, signalId, statusCode);
 }

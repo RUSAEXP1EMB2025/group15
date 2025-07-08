@@ -70,3 +70,130 @@ function testModularStructure() {
 function testModule() {
   return testModularStructure();
 }
+
+// Nature Remo信号テスト関数
+function testNatureRemoSignals() {
+  Logger.log("=== Nature Remo信号テスト開始 ===");
+  
+  try {
+    // 利用可能な信号をリスト
+    Logger.log("利用可能な信号をリスト中...");
+    const signals = listAvailableSignals();
+    
+    if (!signals) {
+      Logger.log("信号リストの取得に失敗しました");
+      return "信号リスト取得失敗";
+    }
+    
+    // 現在の信号IDをテスト
+    Logger.log("現在の信号IDをテスト中...");
+    const mainApp = getMainApp();
+    const natureRemo = mainApp.natureRemoController;
+    
+    if (natureRemo) {
+      Logger.log("現在設定されている信号ID:");
+      Logger.log("  on: " + natureRemo.signalIds.on);
+      Logger.log("  off: " + natureRemo.signalIds.off);
+      Logger.log("  cool: " + natureRemo.signalIds.cool);
+      Logger.log("  warm: " + natureRemo.signalIds.warm);
+      
+      // off信号のテスト（エラーが発生するかもしれない）
+      Logger.log("off信号をテスト中...");
+      const result = natureRemo.sendSignal(natureRemo.signalIds.off);
+      Logger.log("off信号テスト結果: " + JSON.stringify(result));
+    }
+    
+    Logger.log("=== Nature Remo信号テスト完了 ===");
+    return "テスト完了";
+    
+  } catch (error) {
+    Logger.log("テストエラー: " + error.toString());
+    return "テスト失敗: " + error.toString();
+  }
+}
+
+// 信号ID更新用のヘルパー関数
+function updateSignalIds(newSignalIds) {
+  Logger.log("信号IDを更新中...");
+  try {
+    const mainApp = getMainApp();
+    const natureRemo = mainApp.natureRemoController;
+    
+    if (natureRemo && newSignalIds) {
+      // 新しい信号IDを設定
+      Object.assign(natureRemo.signalIds, newSignalIds);
+      Logger.log("信号IDが更新されました:");
+      Logger.log(JSON.stringify(natureRemo.signalIds, null, 2));
+      return "更新成功";
+    }
+    
+    return "更新失敗: natureRemoControllerが利用できません";
+  } catch (error) {
+    Logger.log("更新エラー: " + error.toString());
+    return "更新失敗: " + error.toString();
+  }
+}
+
+// エアコン制御テスト関数
+function testACControl() {
+  Logger.log("=== エアコン制御テスト開始 ===");
+  
+  try {
+    const mainApp = getMainApp();
+    const natureRemo = mainApp.natureRemoController;
+    
+    // エアコンの詳細情報を取得
+    Logger.log("エアコン情報を取得中...");
+    const signals = natureRemo.listAvailableSignals();
+    
+    // エアコンのOFFテスト
+    Logger.log("エアコンOFFテスト中...");
+    const offResult = natureRemo.off();
+    Logger.log("OFF結果: " + JSON.stringify(offResult));
+    
+    // 少し待つ
+    Utilities.sleep(3000);
+    
+    // エアコンのONテスト
+    Logger.log("エアコンONテスト中...");
+    const onResult = natureRemo.on();
+    Logger.log("ON結果: " + JSON.stringify(onResult));
+    
+    Logger.log("=== エアコン制御テスト完了 ===");
+    return "テスト完了";
+    
+  } catch (error) {
+    Logger.log("テストエラー: " + error.toString());
+    return "テスト失敗: " + error.toString();
+  }
+}
+
+// 直接エアコン制御テスト
+function testDirectACControl() {
+  Logger.log("=== 直接エアコン制御テスト開始 ===");
+  
+  try {
+    const mainApp = getMainApp();
+    const natureRemo = mainApp.natureRemoController;
+    
+    // エアコンOFF
+    Logger.log("エアコンを直接OFF中...");
+    const offResult = natureRemo.controlAC('off');
+    Logger.log("直接OFF結果: " + JSON.stringify(offResult));
+    
+    // 少し待つ
+    Utilities.sleep(3000);
+    
+    // エアコンON（冷房20度）
+    Logger.log("エアコンを直接ON中（冷房20度）...");
+    const onResult = natureRemo.controlAC('on', 20, 'cool');
+    Logger.log("直接ON結果: " + JSON.stringify(onResult));
+    
+    Logger.log("=== 直接エアコン制御テスト完了 ===");
+    return "テスト完了";
+    
+  } catch (error) {
+    Logger.log("テストエラー: " + error.toString());
+    return "テスト失敗: " + error.toString();
+  }
+}

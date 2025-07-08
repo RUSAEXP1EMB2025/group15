@@ -1,6 +1,6 @@
 class NatureRemoController {
   constructor() {
-    this.accessToken = (typeof configInstance !== 'undefined') ? configInstance.REMO_TOKEN : "ory_at_-k01LALh-Ca5yJKhiG8kYJs12OHZlScpRSAUqxp14YE.ddBxAUY8u8916Gx66rtu9paZryKp5CUOJEYAs5b2KgI";
+    this.accessToken = (typeof configInstance !== 'undefined') ? configInstance.REMO_TOKEN : "ory_at_VXpeuuSNUAC0381bEDo2RZcjKekoh9LI6NtB0tMRDRg.Mp78KMyOtmX8c3nn-bORMu1EQHab9x5GFUIqnJtT9lk";
     this.signalIds = {
       cool: "9d6fd539-96c2-459a-992d-f829d1acbcf4",
       warm: "e0173dac-3876-4b3d-92d7-3a3ef9b6f3b9",
@@ -20,30 +20,125 @@ class NatureRemoController {
       method: "post",
       headers: {
         "Authorization": `Bearer ${this.accessToken}`
-      }
+      },
+      muteHttpExceptions: true // エラーレスポンスを詳細に取得
     };
 
     let i = 0;
     do {
-      const reply = UrlFetchApp.fetch(url, options);
+      try {
+        const reply = UrlFetchApp.fetch(url, options);
+        if (reply.getResponseCode() !== 200) {
+          Logger.log(`Error sending signal ${signalId}: ${reply.getResponseCode()} - ${reply.getContentText()}`);
+          return { success: false, error: reply.getContentText() };
+        }
+        Logger.log(`Signal ${signalId} sent successfully`);
+        return { success: true };
+      } catch (error) {
+        Logger.log(`Error sending signal ${signalId}: ${error.toString()}`);
+        return { success: false, error: error.toString() };
+      }
       i++;
     } while (i < retryCount);
   }
 
+  // 利用可能な信号IDを取得する関数
+  listAvailableSignals() {
+    const url = 'https://api.nature.global/1/appliances';
+    const options = {
+      method: 'get',
+      headers: {
+        'Authorization': `Bearer ${this.accessToken}`
+      },
+      muteHttpExceptions: true
+    };
+
+    try {
+      const response = UrlFetchApp.fetch(url, options);
+      if (response.getResponseCode() !== 200) {
+        Logger.log(`Error getting appliances: ${response.getResponseCode()} - ${response.getContentText()}`);
+        return null;
+      }
+      
+      const appliances = JSON.parse(response.getContentText());
+      Logger.log("Available appliances and signals:");
+      
+      appliances.forEach(appliance => {
+        Logger.log(`Appliance: ${appliance.nickname} (${appliance.type})`);
+        Logger.log(`  ID: ${appliance.id}`);
+        
+        if (appliance.signals && appliance.signals.length > 0) {
+          appliance.signals.forEach(signal => {
+            Logger.log(`  Signal: ${signal.name} - ID: ${signal.id}`);
+          });
+        } else {
+          Logger.log("  No signals found for this appliance");
+        }
+        
+        // エアコンの場合は、個別の信号情報を確認
+        if (appliance.type === 'AC') {
+          Logger.log("  This is an AC appliance - checking for direct control options");
+          if (appliance.settings) {
+            Logger.log("  Settings available: " + JSON.stringify(appliance.settings));
+          }
+        }
+        
+        Logger.log("  Full appliance data: " + JSON.stringify(appliance, null, 2));
+      });
+      
+      return appliances;
+    } catch (error) {
+      Logger.log(`Error listing signals: ${error.toString()}`);
+      return null;
+    }
+  }
+
   change_cool() {
-    this.sendSignal(this.signalIds.cool, 10);
+    // エアコンの直接制御を試す
+    const acResult = this.controlAC('on', 20, 'cool');
+    if (acResult.success) {
+      return acResult;
+    }
+    
+    // フォールバック: 古い信号送信方式
+    Logger.log("エアコン直接制御失敗、信号送信を試行");
+    return this.sendSignal(this.signalIds.cool, 10);
   }
 
   change_warm() {
-    this.sendSignal(this.signalIds.warm, 10);
+    // エアコンの直接制御を試す
+    const acResult = this.controlAC('on', 25, 'warm');
+    if (acResult.success) {
+      return acResult;
+    }
+    
+    // フォールバック: 古い信号送信方式
+    Logger.log("エアコン直接制御失敗、信号送信を試行");
+    return this.sendSignal(this.signalIds.warm, 10);
   }
 
   off() {
-    this.sendSignal(this.signalIds.off);
+    // エアコンの直接制御を試す
+    const acResult = this.controlAC('off');
+    if (acResult.success) {
+      return acResult;
+    }
+    
+    // フォールバック: 古い信号送信方式
+    Logger.log("エアコン直接制御失敗、信号送信を試行");
+    return this.sendSignal(this.signalIds.off, 1);
   }
 
   on() {
-    this.sendSignal(this.signalIds.on);
+    // エアコンの直接制御を試す
+    const acResult = this.controlAC('on');
+    if (acResult.success) {
+      return acResult;
+    }
+    
+    // フォールバック: 古い信号送信方式
+    Logger.log("エアコン直接制御失敗、信号送信を試行");
+    return this.sendSignal(this.signalIds.on);
   }
 
   turnOnLight() {
@@ -129,6 +224,71 @@ class NatureRemoController {
         Logger.log('  Signal: ' + signal.name + ' (ID: ' + signal.id + ')');
       });
     });
+  }
+
+  // エアコンの直接制御（新しいアプローチ）
+  controlAC(power, temperature = null, mode = null) {
+    const url = 'https://api.nature.global/1/appliances';
+    const options = {
+      method: 'get',
+      headers: {
+        'Authorization': `Bearer ${this.accessToken}`
+      },
+      muteHttpExceptions: true
+    };
+
+    try {
+      const response = UrlFetchApp.fetch(url, options);
+      if (response.getResponseCode() !== 200) {
+        Logger.log(`Error getting appliances: ${response.getResponseCode()} - ${response.getContentText()}`);
+        return { success: false, error: response.getContentText() };
+      }
+      
+      const appliances = JSON.parse(response.getContentText());
+      const ac = appliances.find(app => app.type === 'AC');
+      
+      if (!ac) {
+        Logger.log("エアコンが見つかりません");
+        return { success: false, error: "エアコンが見つかりません" };
+      }
+      
+      // エアコンの制御URL
+      const controlUrl = `https://api.nature.global/1/appliances/${ac.id}/aircon_settings`;
+      
+      // パラメータを構築
+      let payload = `button=${power}`;
+      if (temperature !== null) {
+        payload += `&temperature=${temperature}`;
+      }
+      if (mode !== null) {
+        payload += `&operation_mode=${mode}`;
+      }
+      
+      const controlOptions = {
+        method: 'post',
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        payload: payload,
+        muteHttpExceptions: true
+      };
+      
+      Logger.log(`エアコン制御: ${payload}`);
+      const controlResponse = UrlFetchApp.fetch(controlUrl, controlOptions);
+      
+      if (controlResponse.getResponseCode() !== 200) {
+        Logger.log(`エアコン制御エラー: ${controlResponse.getResponseCode()} - ${controlResponse.getContentText()}`);
+        return { success: false, error: controlResponse.getContentText() };
+      }
+      
+      Logger.log(`エアコン制御成功: ${power}`);
+      return { success: true };
+      
+    } catch (error) {
+      Logger.log(`エラー: ${error.toString()}`);
+      return { success: false, error: error.toString() };
+    }
   }
 }
 

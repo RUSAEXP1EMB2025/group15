@@ -180,6 +180,10 @@ class MainApp {
     return this.natureRemoController.listRemoSignals();
   }
 
+  listAvailableSignals() {
+    return this.natureRemoController.listAvailableSignals();
+  }
+
   // ===== 天気・日時関連関数 =====
   getOsakaWeather() {
     return this.weatherController.getOsakaWeather();
