@@ -53,7 +53,7 @@ function doPost(e) {
           var timeStr = hour + min;
           var weeklyData = weeklySheet.getDataRange().getValues();
           // 既存の同じユーザー・同じ曜日を削除
-          for (var i = weeklyData.length - 1; i >= 0; i--) {
+          for (var i = weeklyData.length - 1; i > 0; i--) {
             if (
               String(weeklyData[i][0]) === String(userId) &&
               Number(weeklyData[i][1]) === weekDayNum
@@ -104,6 +104,7 @@ function doPost(e) {
     else if (message === "かいじょ") {
       var weeklyData = weeklySheet.getDataRange().getValues();
       var alarms = [];
+      var alarmIndexes = [];
       for (var i = 0; i < weeklyData.length; i++) {
         var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
         if (uid === userId) {
@@ -116,6 +117,7 @@ function doPost(e) {
             row: i + 1,
             text: null
           });
+          alarmIndexes.push(i + 1);
         }
       }
       // 曜日→時間で昇順ソート
@@ -124,10 +126,9 @@ function doPost(e) {
         return a.timeStr.localeCompare(b.timeStr);
       });
       // 番号振り直し
-      var alarmIndexes = [];
       for (var j = 0; j < alarms.length; j++) {
         alarms[j].text = (j + 1) + ": " + "日月火水木金土".charAt(alarms[j].weekDayNum) + "曜 " + alarms[j].timeStr.slice(0,2) + ":" + alarms[j].timeStr.slice(2,4);
-        alarmIndexes.push(alarms[j].row);
+        alarmIndexes[j] = alarms[j].row;
       }
       if (alarms.length === 0) {
         replyText = "毎週アラームは登録されていません。";
@@ -142,12 +143,12 @@ function doPost(e) {
       }
     }
     else if (userStatus === "wait_delete_weekly_alarm" && /^\d+$/.test(message)) {
-      var alarmIndexesStr = String(states[userRow][2]);
+      var alarmIndexesStr = states[userRow][2];
       if (alarmIndexesStr) {
         var alarmIndexes = alarmIndexesStr.split(",").map(Number);
         var idx = parseInt(message, 10) - 1;
         var delRow = alarmIndexes[idx];
-        if (idx >= 0 && idx < alarmIndexes.length && delRow >= 1 && delRow <= weeklySheet.getLastRow()) {
+        if (idx >= 0 && idx < alarmIndexes.length && delRow > 1 && delRow <= weeklySheet.getLastRow()) {
           weeklySheet.deleteRow(delRow);
           replyText = "毎週アラームを削除しました。";
         } else {
@@ -159,12 +160,12 @@ function doPost(e) {
       }
     }
 
-    // ------------------- 単発アラーム一覧（削除プロンプトなし） -------------------
+    // ------------------- 単発アラーム -------------------
     else if (message === "アラーム一覧") {
       var alarmData = alarmSheet.getDataRange().getValues();
       var userAlarms = [];
       var now = new Date();
-      for (var i = 0; i < alarmData.length; i++) { // 0から開始（1行目からデータ）
+      for (var i = 1; i < alarmData.length; i++) {
         var alarmTime = String(alarmData[i][2]);
         if (alarmData[i][1] === userId && alarmTimePattern.test(alarmTime)) {
           var alarmDate = parseAlarmTime(alarmTime);
@@ -189,13 +190,12 @@ function doPost(e) {
         }
       }
     }
-
-    // ------------------- 単発アラーム解除（削除プロンプトあり） -------------------
     else if (message === "アラーム解除") {
       var alarmData = alarmSheet.getDataRange().getValues();
       var userAlarms = [];
+      var alarmIndexes = [];
       var now = new Date();
-      for (var i = 0; i < alarmData.length; i++) {
+      for (var i = 1; i < alarmData.length; i++) {
         var alarmTime = String(alarmData[i][2]);
         if (alarmData[i][1] === userId && alarmTimePattern.test(alarmTime)) {
           var alarmDate = parseAlarmTime(alarmTime);
@@ -203,8 +203,7 @@ function doPost(e) {
             userAlarms.push({
               dateObj: alarmDate,
               text: formatAlarmTime(alarmTime),
-              row: i + 1, // シート上の実際の行番号
-              alarmTime: alarmTime // 元の時間文字列も保存
+              row: i + 1
             });
           }
         }
@@ -217,69 +216,41 @@ function doPost(e) {
         replyText = "登録されているアラームはありません。";
       } else {
         replyText = "登録アラーム一覧：\n";
-        var alarmData = []; // 行番号の代わりに、アラーム時間を保存
         for (var j = 0; j < userAlarms.length; j++) {
           replyText += (j + 1) + ": " + userAlarms[j].text + "\n";
-          alarmData.push(userAlarms[j].alarmTime);
+          alarmIndexes.push(userAlarms[j].row);
         }
         replyText += "削除したいアラームの番号を送信してください。";
         if (userRow >= 0) {
           stateSheet.getRange(userRow + 1, 2).setValue("wait_delete_alarm");
-          stateSheet.getRange(userRow + 1, 3).setValue(alarmData.join(","));
+          stateSheet.getRange(userRow + 1, 3).setValue(alarmIndexes.join(","));
         } else {
-          stateSheet.appendRow([userId, "wait_delete_alarm", alarmData.join(",")]);
+          stateSheet.appendRow([userId, "wait_delete_alarm", alarmIndexes.join(",")]);
         }
       }
     }
     else if (userStatus === "wait_delete_alarm" && /^\d+$/.test(message)) {
-      try {
-        sheet.appendRow([date, userId, "アラーム削除リクエスト:" + message]);
-        var alarmDataStr = String(states[userRow][2]); // 文字列化を徹底
-        
-        // デバッグ情報を追加
-        sheet.appendRow([date, userId, "デバッグ - alarmDataStr:" + alarmDataStr]);
-        
-        if (alarmDataStr && alarmDataStr.trim() !== "" && alarmDataStr !== "undefined") {
-          var alarmTimes = alarmDataStr.split(","); // アラーム時間の配列
-          var idx = parseInt(message, 10) - 1; // 入力番号は1始まり
-          
-          // デバッグ情報を追加
-          sheet.appendRow([date, userId, "デバッグ - idx:" + idx + ", alarmTimes.length:" + alarmTimes.length + ", alarmTimes:" + alarmTimes.join(",")]);
-          
-          if (idx >= 0 && idx < alarmTimes.length) {
-            var targetAlarmTime = alarmTimes[idx];
-            
-            // 現在のアラームデータを再取得して削除対象を探す
-            var currentAlarmData = alarmSheet.getDataRange().getValues();
-            var found = false;
-            
-            for (var i = 0; i < currentAlarmData.length; i++) {
-              var rowAlarmTime = String(currentAlarmData[i][2]);
-              var rowUserId = String(currentAlarmData[i][1]);
-              
-              if (rowUserId === userId && rowAlarmTime === targetAlarmTime) {
-                // 該当のアラームを削除
-                alarmSheet.deleteRow(i + 1);
-                sheet.appendRow([date, userId, "アラーム削除実行:" + message + " (時間:" + targetAlarmTime + ")"]);
-                replyText = "アラームを削除しました。";
-                found = true;
-                break;
-              }
-            }
-            
-            if (!found) {
-              replyText = "削除対象のアラームが見つかりません。もう一度「アラーム解除」から実行してください。";
-            }
-          } else {
-            replyText = "正しい番号を送信してください。（1から" + alarmTimes.length + "の範囲で入力してください）";
-          }
-          stateSheet.getRange(userRow + 1, 2, 1, 2).setValues([["", ""]]);
+      sheet.appendRow([date, userId, "アラーム削除リクエスト:" + message]);
+      var alarmIndexesStr = states[userRow][2];
+      if (alarmIndexesStr) {
+        var alarmIndexes = alarmIndexesStr.split(",").map(Number);
+        var idx = parseInt(message, 10) - 1;
+        var delRow = alarmIndexes[idx];
+        if (
+          idx >= 0 &&
+          idx < alarmIndexes.length &&
+          delRow > 1 &&
+          delRow <= alarmSheet.getLastRow()
+        ) {
+          alarmSheet.deleteRow(delRow);
+          sheet.appendRow([date, userId, "アラーム削除実行:" + message]);
+          replyText = "アラームを削除しました。";
         } else {
-          replyText = "もう一度「アラーム解除」と送信してください。";
+          replyText = "正しい番号を送信してください。";
         }
-      } catch (e) {
-        replyText = "エラーが発生しました: " + e.toString();
-        sheet.appendRow([date, userId, "エラー詳細:" + e.toString()]);
+        stateSheet.getRange(userRow + 1, 2, 1, 2).setValues([["", ""]]);
+      } else {
+        replyText = "もう一度「アラーム解除」と送信してください。";
       }
     }
 
@@ -313,23 +284,13 @@ function doPost(e) {
         "headers": headers,
         "payload": JSON.stringify(postData)
       };
-      try {
-        UrlFetchApp.fetch(replyUrl, options);
-      } catch (e) {
-        Logger.log("返信送信エラー: " + e.toString());
-      }
+      UrlFetchApp.fetch(replyUrl, options);
     }
     else if (message == "オン"){
       on();
     }
     else if(message == "オフ"){
       off();
-    }
-    else{
-      const props = PropertiesService.getScriptProperties();
-      props.setProperty('stopSending', 'true'); // フラグを立てる
-      Logger.log('ユーザーからメッセージを受信。送信停止フラグを設定しました。');
-      return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
     }
   }
   return ContentService.createTextOutput("OK");
