@@ -73,7 +73,7 @@ function doPost(e) {
       }
     }
     // ★ 毎週アラーム一覧（いちらん）
-    else if (message === "いちらん") {
+    else if (message === "毎週アラーム一覧") {
       var weeklyData = weeklySheet.getDataRange().getValues();
       var alarms = [];
       for (var i = 0; i < weeklyData.length; i++) {
@@ -101,10 +101,9 @@ function doPost(e) {
       }
     }
     // ★ 毎週アラーム解除（かいじょ）
-    else if (message === "かいじょ") {
+    else if (message === "毎週アラーム解除") {
       var weeklyData = weeklySheet.getDataRange().getValues();
       var alarms = [];
-      var alarmIndexes = [];
       for (var i = 0; i < weeklyData.length; i++) {
         var uid = typeof weeklyData[i][0] === "string" ? weeklyData[i][0].trim() : String(weeklyData[i][0]);
         if (uid === userId) {
@@ -117,7 +116,6 @@ function doPost(e) {
             row: i + 1,
             text: null
           });
-          alarmIndexes.push(i + 1);
         }
       }
       // 曜日→時間で昇順ソート
@@ -126,9 +124,10 @@ function doPost(e) {
         return a.timeStr.localeCompare(b.timeStr);
       });
       // 番号振り直し
+      var alarmIndexes = [];
       for (var j = 0; j < alarms.length; j++) {
         alarms[j].text = (j + 1) + ": " + "日月火水木金土".charAt(alarms[j].weekDayNum) + "曜 " + alarms[j].timeStr.slice(0,2) + ":" + alarms[j].timeStr.slice(2,4);
-        alarmIndexes[j] = alarms[j].row;
+        alarmIndexes.push(alarms[j].row);
       }
       if (alarms.length === 0) {
         replyText = "毎週アラームは登録されていません。";
@@ -143,12 +142,12 @@ function doPost(e) {
       }
     }
     else if (userStatus === "wait_delete_weekly_alarm" && /^\d+$/.test(message)) {
-      var alarmIndexesStr = states[userRow][2];
+      var alarmIndexesStr = String(states[userRow][2]);
       if (alarmIndexesStr) {
         var alarmIndexes = alarmIndexesStr.split(",").map(Number);
         var idx = parseInt(message, 10) - 1;
         var delRow = alarmIndexes[idx];
-        if (idx >= 0 && idx < alarmIndexes.length && delRow > 1 && delRow <= weeklySheet.getLastRow()) {
+        if (idx >= 0 && idx < alarmIndexes.length && delRow >= 1 && delRow <= weeklySheet.getLastRow()) {
           weeklySheet.deleteRow(delRow);
           replyText = "毎週アラームを削除しました。";
         } else {
